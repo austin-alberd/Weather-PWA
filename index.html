@@ -13,19 +13,26 @@
         <div class="card-body">
             <!--Current Weather Display-->
             <h1 class="text-center">Current Weather</h1>
-            <div class="col-12 justify-content-between align-items-center">
-                    <h4><i class="bi bi-thermometer-half"></i><span class = "ms-2 me-2" id="txtTemperature">tmp</span></h4>
+            <div class="col-12 d-flex align-items-center justify-content-center" style="border:1px solid green">
+                <div class="mx-5">
+                    <h1 class="text-center"><i class="bi bi-geo-alt-fill"></i></h1>
+                    <p id="txtLocation">Cookeville,TN</p>
+                </div>
+                <div class="mx-5">
+                    <h4><i class="bi bi-thermometer-half"></i><span class = "ms-4" id="txtTemperature">tmp</span></h4>
                     <h4><i class="bi bi-moisture"></i><span class = "ms-4" id="txtHumidity">humid</span></h4>
                     <h4><i class="bi bi-cloudy-fill"></i><span class = "ms-4" id="txtPrecipitation">precip</span></h4>
+                </div>
             </div>
 
-            <!--Hourly Weather Display-->
+
+            <!--Hourly Weather Display
             <h1 class="text-center mt-3">Hourly Weather</h1>
             <div class="d-flex justify-content-center align-items-center">
                 <canvas id="canvasTempChart">
 
                 </canvas>
-            </div>
+            </div>-->
 
         </div>
     </div>
