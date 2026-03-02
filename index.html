@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-dark d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card col-12 col-md-10 col-lg-10">
+        <div class="card-body">
+            <!--Current Weather Display-->
+            <h1 class="text-center">Current Weather</h1>
+            <div class="col-12 justify-content-between align-items-center">
+                    <h4><i class="bi bi-thermometer-half"></i><span class = "ms-2 me-2" id="txtTemperature">tmp</span></h4>
+                    <h4><i class="bi bi-moisture"></i><span class = "ms-4" id="txtHumidity">humid</span></h4>
+                    <h4><i class="bi bi-cloudy-fill"></i><span class = "ms-4" id="txtPrecipitation">precip</span></h4>
+            </div>
+
+            <!--Hourly Weather Display-->
+            <h1 class="text-center mt-3">Hourly Weather</h1>
+            <div class="d-flex justify-content-center align-items-center">
+                <canvas id="canvasTempChart">
+
+                </canvas>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.js" integrity="sha512-D4pL3vNgjkHR/qq+nZywuS6Hg1gwR+UzrdBW6Yg8l26revKyQHMgPq9CLJ2+HHalepS+NuGw1ayCCsGXu9JCXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="script/app.js"></script>
+</body>
+</html>
