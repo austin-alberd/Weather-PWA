@@ -16,30 +16,48 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json" />
+
 </head>
 
 <body class="bg-dark d-flex justify-content-center align-items-center min-vh-100">
     <div class="card col-12 col-md-7 col-lg-6">
-        <div class="card-body">
-            <!--Current Weather Display-->
-            <h2 class="text-center">Current Weather</h2>
-            <div class="col-12 d-block d-md-flex d-lg-flex align-items-center justify-content-center">
-                <div class="mx-5">
-                    <h1 class="text-center"><i class="bi bi-geo-alt-fill"></i></h1>
-                    <p id="txtLocation" class="text-center">Cookeville,TN</p>
+        <main>
+            <div class="card-body">
+                <!--Current Weather Display-->
+                <h2 class="text-center">Current Weather</h2>
+                <div class="col-12 d-block d-md-flex d-lg-flex align-items-center justify-content-center">
+                    <div class="mx-5">
+                        <div>
+                            <h1 class="text-center"><i class="bi bi-geo-alt-fill" aria-roledescription="location indicator"></i></h1>
+                            <p id="txtLocation" class="text-center">Cookeville,TN</p>
+                        </div>
+                        <div>
+                            <h1 class="text-center" id="txtWeatherIcon"><i class="bi bi-cloud-snow" aria-label="Snowing"></i></h1>
+                            <p id="txtWeatherConditions" class="text-center">Current Weather Conditions</p>
+                        </div>
+                    </div>
+                    <div class="mx-5d-flex flex-column justify-content-center">
+                        <p class="h5"><i class="bi bi-thermometer-half" aria-roledescription="temperature indicator" alt="picture of a thermometer"></i><span class = "ms-4" id="txtTemperature">tmp</span></p>
+                        <p class="h5"><i class="bi bi-moisture" aria-roledescription="humidity indicator" alt="a picture of a logo that indicates humidity"></i><span class = "ms-4" id="txtHumidity">humid</span></p>
+                        <p class="h5"><i class="bi bi-cloudy-fill" aria-roledescription="temperature indicator" alt="a picture of a cloud"></i><span class = "ms-4" id="txtPrecipitation">precip</span></p>
+                    </div>
                 </div>
-                <div class="mx-5">
-                    <h4><i class="bi bi-thermometer-half"></i><span class = "ms-4" id="txtTemperature">tmp</span></h4>
-                    <h4><i class="bi bi-moisture"></i><span class = "ms-4" id="txtHumidity">humid</span></h4>
-                    <h4><i class="bi bi-cloudy-fill"></i><span class = "ms-4" id="txtPrecipitation">precip</span></h4>
+
+                <!--Hourly Weather Display-->
+                <hr>
+                <h2 class="text-center">Hourly Weather</h2>
+                <div class="d-flex justify-content-center align-items-center flex-column">
+                    <div class="my-1 col-12 col-md-10 col-lg-10">
+                        <canvas id="canTempChart"></canvas>
+                    </div>
+                    <div class="my-1 col-12 col-md-10 col-lg-10">
+                        <canvas id="canPrecipChart"></canvas>
+                    </div>
+                    
                 </div>
+                <p>Data provided from <a href="https://open-meteo.com/">Open-Meteo</a></p>
             </div>
-
-            <!--Hourly Weather Display-->
-            <hr>
-            <h2 class="text-center">Hourly Weather</h2>
-
-        </div>
+        </main>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.js" integrity="sha512-D4pL3vNgjkHR/qq+nZywuS6Hg1gwR+UzrdBW6Yg8l26revKyQHMgPq9CLJ2+HHalepS+NuGw1ayCCsGXu9JCXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
