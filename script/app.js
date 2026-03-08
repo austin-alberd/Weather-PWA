@@ -19,7 +19,7 @@ function updateCurrentWeatherData(){
     document.querySelector('#txtPrecipitation').innerHTML = `${strPrecipitation} in.`
 }
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded",async ()=>{
     //Load the data from the API or session storage
     //check if there is a current weather in session storage. If there is not pull it from the API and do set it. If it is just use that
     if(!sessionStorage.getItem("currentWeather")){
@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded",()=>{
                 throw new Error("Bad Response")
             }
         }).then(data=>{
-            console.log(data)
             sessionStorage.setItem("currentWeather",JSON.stringify(data))
             objCurrentWeather = data
             updateCurrentWeatherData()

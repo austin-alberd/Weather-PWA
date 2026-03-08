@@ -1,0 +1,20 @@
+{
+  "short_name": "WX Watch",
+  "name": "Weather Watch",
+  "icons": [
+    {
+      "src": "/images/WX.png",
+      "sizes": "60x60",
+      "type": "image/png"
+    },
+    {
+        "src":"/images/WX-Watch.png",
+        "sizes":"144x144",
+        "type":"image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "black",
+  "background_color": "white"
+}
