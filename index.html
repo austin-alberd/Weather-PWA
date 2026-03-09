@@ -7,7 +7,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>Weather App</title>
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="apple-touch-icon" href="images/WX.png">
     <link rel="apple-touch-icon" sizes="60x60" href="images/WX.png"">
     <link rel="apple-touch-icon" sizes="114x114" href="images/WX-Watch.png">
@@ -16,7 +15,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json" />
-
 </head>
 
 <body class="bg-dark d-flex justify-content-center align-items-center min-vh-100">
@@ -36,7 +34,7 @@
                             <p id="txtWeatherConditions" class="text-center">Current Weather Conditions</p>
                         </div>
                     </div>
-                    <div class="mx-5d-flex flex-column justify-content-center">
+                    <div class="mx-5 d-flex flex-column align-items-center">
                         <p class="h5"><i class="bi bi-thermometer-half" aria-roledescription="temperature indicator" alt="picture of a thermometer"></i><span class = "ms-4" id="txtTemperature">tmp</span></p>
                         <p class="h5"><i class="bi bi-moisture" aria-roledescription="humidity indicator" alt="a picture of a logo that indicates humidity"></i><span class = "ms-4" id="txtHumidity">humid</span></p>
                         <p class="h5"><i class="bi bi-cloudy-fill" aria-roledescription="temperature indicator" alt="a picture of a cloud"></i><span class = "ms-4" id="txtPrecipitation">precip</span></p>
@@ -47,13 +45,26 @@
                 <hr>
                 <h2 class="text-center">Hourly Weather</h2>
                 <div class="d-flex justify-content-center align-items-center flex-column">
-                    <div class="my-1 col-12 col-md-10 col-lg-10">
-                        <canvas id="canTempChart"></canvas>
+                    <div class="my-1 col-12 col-md-8 col-lg-8" >
+                        <canvas id="canTempChart" aria-label="A chart of projected temperature over the day"></canvas>
                     </div>
-                    <div class="my-1 col-12 col-md-10 col-lg-10">
-                        <canvas id="canPrecipChart"></canvas>
+                    <div class="my-1 col-12 col-md-8 col-lg-8">
+                        <canvas id="canPrecipChart" aria-label="A chart of projected precipitation over the day"></canvas>
                     </div>
                     
+                    <!--Table for people using screen readers-->
+                    <table id="tblHourlyWeatherData" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Temperature in Farenheit</th>
+                                <th>Chance of Precipitation in Percent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
                 </div>
                 <p>Data provided from <a href="https://open-meteo.com/">Open-Meteo</a></p>
             </div>
@@ -61,6 +72,161 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.js" integrity="sha512-D4pL3vNgjkHR/qq+nZywuS6Hg1gwR+UzrdBW6Yg8l26revKyQHMgPq9CLJ2+HHalepS+NuGw1ayCCsGXu9JCXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="script/app.js"></script>
+    <script>
+        //36.16184839116766, -85.4981945742203
+        const strLat=36.16184839116766 //Latitude
+        const strLong=-85.4981945742203 //Longitude
+
+        //The two API URLs I split them this way so that I can pull different data depending on some conditions
+        const urlAPIURLHourly = `https://api.open-meteo.com/v1/forecast?latitude=${strLat}&longitude=${strLong}&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m,precipitation_probability&forecast_days=1&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch`
+        const urlAPIURLCurrent = `https://api.open-meteo.com/v1/forecast?latitude=${strLat}&longitude=${strLong}&current=temperature_2m,relative_humidity_2m,weather_code,precipitation&forecast_days=1&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch`
+
+        //
+        let objHourlyWeather = {}
+        let objCurrentWeather = {}
+
+        //Function to update the current weather data
+        function updateCurrentWeatherData(){
+            const strTemperature = objCurrentWeather.current.temperature_2m
+            const strHumidity = objCurrentWeather.current.relative_humidity_2m
+            const strPrecipitation = objCurrentWeather.current.precipitation
+
+            //set the basic stuff
+            document.querySelector('#txtTemperature').innerHTML =`${strTemperature}&deg;F`
+            document.querySelector('#txtHumidity').innerHTML = `${strHumidity}%`
+            document.querySelector('#txtPrecipitation').innerHTML = `${strPrecipitation} in.`
+
+            //do the weathercode stuff
+            const intWeatherCode = objCurrentWeather.current.weather_code
+            const objWeatherCodeMap={0:"Clear Sky", 1:"Mainly Clear", 2:"Partly Cloudy", 3:"Overcast", 45:"Fog", 48:"Depositing Rime Fog", 51:"Light Drizzle", 53:"Moderate Drizzle", 55:"Heavy Drizzle", 56:"Light Freezing Drizzle", 57:"Heavy Freezing Drizzle",61:"Slight Rain", 63:"Moderate Rain", 65:"Heavy Rain", 66:"Light Freezing Rain", 67:"Heavy Freezing Rain", 71:"Slight Snow Fall", 73:"Moderate Snow Fall", 75:"Heavy Snow Fall", 77:"Snow Grains", 80:"Slight Rain Showers", 81:"Moderate Rain Showers", 82:"Heavy Rain Showers", 85:"Slight Snow Showers", 86:"Heavy Snow Showers",95:"Thunderstorms",96:"Thunderstorms with Slight Hail", 97:"Thunderstorms with Heavy Hail"}
+            const strWeatherCodeText = objWeatherCodeMap[intWeatherCode]
+            let strWeatherIcon = ""
+            //set the current weather conditions
+            document.querySelector("#txtWeatherConditions").innerHTML = strWeatherCodeText
+
+            //set the weather code icon
+            if(intWeatherCode==0){
+                strWeatherIcon='<i class="bi bi-brightness-high" aria-roledescription="clear sky"></i>'
+            }
+
+            if([1,2,3].includes(intWeatherCode)){
+                strWeatherIcon=`<i class="bi bi-cloud-sun" aria-roledescription="${strWeatherCodeText} indicator" alt="${strWeatherCodeText}"></i>`
+            }
+
+            if([48,45].includes(intWeatherCode)){
+                strWeatherIcon=`<i class="bi bi-cloud-fog" aria-roledescription="${strWeatherCodeText} indicator" alt="${strWeatherCodeText}"></i>`
+            }
+
+            if([51,53,55,61,63,65,80,81,82].includes(intWeatherCode)){
+                strWeatherIcon=`<i class="bi bi-cloud-rain" aria-roledescription="${strWeatherCodeText} indicator" alt="${strWeatherCodeText}"></i>`
+            }
+
+            if([56,57,66,67,71,73,75,77,85,86].includes(intWeatherCode)){
+                strWeatherIcon=`<i class="bi bi-cloud-snow" aria-roledescription="${strWeatherCodeText} indicator" alt="${strWeatherCodeText}"></i>`
+            }
+
+            if([95,96,99].includes(intWeatherCode)){
+                strWeatherIcon=`<i class="bi bi-cloud-lightning-rain" aria-label="${strWeatherCodeText} indicator" alt="${strWeatherCodeText}"></i>`
+            }
+
+            //actually set the icon
+            document.querySelector("#txtWeatherIcon").innerHTML = strWeatherIcon
+        }
+
+        //Function to update the hourly weather stuff
+        function updateHourlyWeather(){
+            //get all of the data and construct labels and datasets (makes the chart making alot cleaner)
+            const arrLabels = objHourlyWeather.hourly.time.map(strTime=> strTime.split("T")[1])
+            const arrPrecipitation = objHourlyWeather.hourly.precipitation_probability
+            const arrTemperature = objHourlyWeather.hourly.temperature_2m
+
+            //create the temperature chart
+            new Chart(document.querySelector("#canTempChart"),{
+                type:'bar',
+                data:{
+                    labels:arrLabels,
+                    datasets:[{
+                        backgroundColor: '#afc206',
+                        label:"Hourly Temperature in Farenheit",
+                        data:arrTemperature
+                    }]
+                }
+            })
+
+            //create the precipitation chart
+            new Chart(document.querySelector("#canPrecipChart"),{
+                type:'bar',
+                data:{
+                    labels:arrLabels,
+                    datasets:[{
+                        backgroundColor: '#04708b',
+                        label:"Chance of Precipitation (%)",
+                        data:arrPrecipitation
+                    }]
+                }
+            })
+
+            //create the chart for accessability purposes
+            document.querySelector("#tblHourlyWeatherData tbody").innerHTML=""//clear out the table
+            for(let i = 0; i< arrLabels.length;i++){
+                document.querySelector("#tblHourlyWeatherData tbody").innerHTML+=`<tr><td>${arrLabels[i]}</td><td>${arrTemperature[i]}</td><td>${arrPrecipitation[i]}</td><tr>`
+            }
+        }
+
+        // Load up all of the data either from memory or from the API itself
+        document.addEventListener("DOMContentLoaded",async ()=>{
+            //Load the data from the API or session storage
+            //check if there is a current weather in session storage. If there is not pull it from the API and do set it. If it is just use that
+            if(!sessionStorage.getItem("currentWeather")){
+                fetch(urlAPIURLCurrent,{
+                    method:"GET"
+                }).then(res=>{
+                    if(res.ok){
+                        return res.json()
+                    }else{
+                        throw new Error("Bad Response")
+                    }
+                }).then(data=>{
+                    //Take the new data and store it then update the data
+                    sessionStorage.setItem("currentWeather",JSON.stringify(data))
+                    objCurrentWeather = data
+                    updateCurrentWeatherData()
+                })
+            }else{
+                //just use the stuff we have stored and set all the things according to that
+                objCurrentWeather = JSON.parse(sessionStorage.getItem("currentWeather"))
+                updateCurrentWeatherData()
+            }
+
+            //Check if there is an hourly weather in the local storage if there is put in the the data variable if not pull it and put it in local storage
+            const dateCurrentDate = new Date()
+            const strPullTime=`${dateCurrentDate.getFullYear()}${dateCurrentDate.getMonth()}${dateCurrentDate.getDate()}` //A little code that shows the last time the data was pulled YYYYMMDD so we can check if it is time to pull the data or not
+
+            //Pull the data if the item doesnt exist in storeage, there is no pull time or the pull time is old
+            if(!localStorage.getItem("hourlyWeather") || !localStorage.getItem("pullTime") || strPullTime != localStorage.getItem("pullTime")){
+                fetch(urlAPIURLHourly,{
+                    method:"GET"
+                }).then(res =>{
+                    if(res.ok){
+                        return res.json()
+                    }else{
+                        throw new Error("Bad Response")
+                    }
+                }).then(data=>{
+                    //store the new stuff and set data accordingly
+                    localStorage.setItem("hourlyWeather",JSON.stringify(data))
+                    localStorage.setItem("pullTime",strPullTime)
+                    objHourlyWeather = data
+                    updateHourlyWeather()
+                })
+            }else{
+                //Just use the old stuff and set the data accordingly
+                objHourlyWeather = JSON.parse(localStorage.getItem("hourlyWeather"))
+                updateHourlyWeather()
+            }
+        })
+                
+
+    </script>
 </body>
 </html>
